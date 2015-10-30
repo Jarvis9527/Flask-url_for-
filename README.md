@@ -19,5 +19,9 @@ http://localhost:5000/user/john
 传入url_for()的关键字参数不仅限于动态路由中的参数，函数能将任何额外参数添加到查询字符串中，例如，url_for('index', page=2)
 的返回结果是/?page=2
 
-
+2,静态文件：
+Web程序不是仅由Python代码和模板组成，大多数程序还会使用静态文件，例如HTML代码中引用的图片，JavaScript源码文件和CSS
+hello.py程序的URL映射时，其中一个static路由，这是因为对静态文件的引用被当成一个特殊的路由，
+即/static/<filename>，例如，调用url_for('static', filename='css/styles.css', _external=True)得到的结果是http://localhost:5000
+/static/css/styles.css
 
