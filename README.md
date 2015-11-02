@@ -1,6 +1,5 @@
 一，Flask 框架中路由函数url_for()的具体定义   redirect(url_for('index'))
-
-1，注：因为在刚接触Flask框架时候，写了验证用户登录程序，但是不知道处理完数据，如何让其他路由处理数据，
+1，注：因为在刚接触Flask框架时候，写了验证用户登录程序，但是不知道处理完数据，如何让其他路由处理数据,吃过亏，在这里记录一下，希望能理解
 Python Flask Web框架的url链接问题：
 在模板中，直接编写简单路由的URL链接不难，但对于包含可变部分的动态路由，在模板中构建正确的URL就很困难。
 而且，直接编写URL会对代码中定义的路由产生不必要的依赖关系，如果重新定义路由，模板中的链接可能会失效。
@@ -24,4 +23,7 @@ Web程序不是仅由Python代码和模板组成，大多数程序还会使用�
 hello.py程序的URL映射时，其中一个static路由，这是因为对静态文件的引用被当成一个特殊的路由，
 即/static/<filename>，例如，调用url_for('static', filename='css/styles.css', _external=True)得到的结果是http://localhost:5000
 /static/css/styles.css
+
+默认设置下，Flask在程序根目录中名为static的子目录中寻找静态文件，如果需要，可在static文件夹中使用子文件夹存放文件，服务器收到前面那个URL后，会生成一个响应，包含文件系统中static/css/styles.css文件的内容。
+
 
