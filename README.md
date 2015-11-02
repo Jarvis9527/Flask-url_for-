@@ -27,13 +27,13 @@ hello.py程序的URL映射时，其中一个static路由，这是因为对静态
 默认设置下，Flask在程序根目录中名为static的子目录中寻找静态文件，如果需要，可在static文件夹中使用子文件夹存放文件，服务器收到前面那个URL后，会生成一个响应，包含文件系统中static/css/styles.css文件的内容。
 
 3,在程序中基模板中放置favicon.ico图标，这个图标会显示在浏览器的地址栏中.
-tmplates/base.html:
-{% block head %}
-{{ super() }}
-<link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.ico' )}}"
-    type="image/x-icon">
-<link rel="icon" href="{{ url_for('static', filename = 'favicon.ico') }}"
-    type="image/x-icon">
-{% endblock %}
+!tmplates/base.html:
+!{% block head %}
+!{{ super() }}
+!<link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.ico' )}}"
+!    type="image/x-icon">
+!<link rel="icon" href="{{ url_for('static', filename = 'favicon.ico') }}"
+!    type="image/x-icon">
+!{% endblock %}
 
 4，
