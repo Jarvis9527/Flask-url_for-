@@ -41,7 +41,7 @@ def index():
         for key, value in user_dic.items(): 
             if username == key and password == value: 
                 return redirect('http://www.baidu.com')
-            return redirect(url_for('page_not_found'))
+            return redirect(url_for('index'))  #page_not_found
 
         conn = mysql.connect("127.0.0.1", "root", "123.com", "Flask") 
         cursor = conn.cursor() 
