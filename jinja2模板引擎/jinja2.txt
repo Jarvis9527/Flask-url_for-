@@ -76,5 +76,8 @@ block标签定义的元素可在衍生模板中修改，我们定义了名为hea
 
 extends指令声明这个模板衍生自base.html,在extends指令之后，基础模板中的3个块被重新定义，模板引擎会将其插入适当的位置。注意新定义的head块，在基模板中其内容不是空的，所以使用super()获取原来的内容。
 
+这里写的不全，jinja2中文学习地址链接为可以进行查看学习：
+http://docs.pythontab.com/jinja/jinja2/
+http://docs.jinkan.org/docs/jinja2/
 
 
