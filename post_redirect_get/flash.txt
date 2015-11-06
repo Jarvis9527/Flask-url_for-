@@ -15,4 +15,30 @@ def index():
         return redirect(url_for('index'))
     return render_template('index.html',form = form, name = session.get('name'))
 
+实例化表单类，通过validate_on_submit()函数进行验证，old_name的值是从session.get('name')中取值，
+判断old_name的值不等于None,和old_name不等于form.name.data从表单取的值。
+如果条件成立，flash会输出提示一段话。然后form.name.data从表单中取值，然后保存在session['name']字典中
+然后重定向url到index函数的路由进行处理，如果用户输入空，不通过验证，直接返回index.html模板form还是表单，name值
+是从session字典中的值
+
+在这个例子中，每次提交的名字都会和存储在用户会话中的名字进行比较，而会话中存储的名字是前一次在这个表单中提交的
+数据，如果两个名字不一样，就会调用flash()函数，在发送客户端的下一个响应中显示一个消息
+
+仅调用flash()函数并不能把消息显示出来，程序使用的模板要渲染这些消息，最好在基模板中渲染Flash()消息，因为这样
+所有页面都能使用这些消息，Flask把get_flashed_messages()函数开放给模板，用来获取并渲染消息。
+templates/base.html: 渲染Flash消息：
+{% block content %}
+<div class="container">
+  {% for message in get_flashed_messages() %}
+  <div class="alert alert-warning">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{ message }}
+  </div>
+  {% enfor %}
+
+  {% block page_content %}{% endblock %}
+</div>
+{% endblock %}
+
+
 
