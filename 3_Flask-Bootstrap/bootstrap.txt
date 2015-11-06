@@ -38,6 +38,58 @@ Bootstrap官方文档(http://getbootstrap.com)是很好的学习资源，有很�
 
 Flask-Bootstrap的base.html模板还定义了很多其他块，都可在衍生模板中使用
 Flask-Bootstrap基模板中定义的块
+块名：           说明：
+doc              整个HTML文档
+html_attribs     <html>标签的属性
+html             <html>标签中的内容
+head             <head>标签中的内容
+title            <title>标签中的内容
+
+metas            一组<meta>标签
+styles           层叠样式表定义
+body_attribs     <body>标签的属性
+body             <body>标签中的内容
+navbar           用户定义的导航条
+content          用户定义的页面内容
+scripts          文档底部的JavaScript声明
+
+很多块都是Flask-Bootstrap自用的，如果直接重定义可能会导致一些问题，例如Bootstrap所需的文件在styles和script块中声明，如果程序需要向已经有内容的块中添加新内容，必须使用jinja2提供的super()函数，例如，如果要在衍生模板中添加新JavaScript文件，需要这么定义script块：
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript" src="my-script.js"></script>
+{% endblock %}
+
+
+
+自定义错误页面：
+如果在浏览器的地址栏中输入了不可用的路由，那么会显示一个状态吗为404的错误页面，现在这个错误页面太简陋、平庸，而且样式和使用了Bootstrap的页面不一致。
+想常规路由一样，Flask允许程序使用基于模板的自定义错误页面，最常见的错误代码有两个：404，客户端请求未知页面或路由显示；500，有未处理的异常时显示。
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'),404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'),500
+和视图函数一样，错误处理程序也会返回响应，他们还返回与该错误对于的数字状态吗。
+错误处理程序中引用的模板也需要编写，这些模板应该和常规页面使用相同的布局，因此要有一个导航条和显示错误消息的页面头部。
+
+编写这些模板最直观的方法是复制template/user.html,分别创建templates/404.html和templates/500.html,
+然后把这两个文件中的页面头部元素改成相应的错误消息，但这种方法会带来很多重复劳动
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
