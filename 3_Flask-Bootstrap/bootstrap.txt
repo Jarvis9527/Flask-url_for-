@@ -77,6 +77,12 @@ def internal_server_error(e):
 编写这些模板最直观的方法是复制template/user.html,分别创建templates/404.html和templates/500.html,
 然后把这两个文件中的页面头部元素改成相应的错误消息，但这种方法会带来很多重复劳动
 
+jinja2的模板继承机制可以帮助我们解决这一问题，Flask-Bootstrap提供了一个具有页面基本布局的基模板，同样，程序可以定义一个具有更完整页面布局的基模板，其中包含导航条，而页面内容则客流在衍生模板中定义，例子：templates/base.html
+的内容，这是一个继承自bootstrap/base.html的新模板，其中定义了导航条，这个模板本身也可以为其他模板的基模板，
+例如：templates/user.html、templates/404.html和templates/500.html
+templates/base.html:包含导航条的程序基模板
+{% extends "boostrap/base.html" %}
+
 
 
 
