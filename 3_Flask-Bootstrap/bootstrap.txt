@@ -77,11 +77,48 @@ def internal_server_error(e):
 编写这些模板最直观的方法是复制template/user.html,分别创建templates/404.html和templates/500.html,
 然后把这两个文件中的页面头部元素改成相应的错误消息，但这种方法会带来很多重复劳动
 
-jinja2的模板继承机制可以帮助我们解决这一问题，Flask-Bootstrap提供了一个具有页面基本布局的基模板，同样，程序可以定义一个具有更完整页面布局的基模板，其中包含导航条，而页面内容则客流在衍生模板中定义，例子：templates/base.html
+
+jinja2的模板继承机制可以帮助我们解决这一问题，Flask-Bootstrap提供了一个具有页面基本布局的基模板，同样，程序可以定义一个具有更完整页面布局的基模板，其中包含导航条，而页面内容则可留在衍生模板中定义，例子：templates/base.html
 的内容，这是一个继承自bootstrap/base.html的新模板，其中定义了导航条，这个模板本身也可以为其他模板的基模板，
 例如：templates/user.html、templates/404.html和templates/500.html
 templates/base.html:包含导航条的程序基模板
 {% extends "boostrap/base.html" %}
+
+。。。
+{% block content %}
+<div class="container">
+  {% block page_content %}{% endblock %}
+</div>
+{% endblock %}
+
+这个模板的content块中只有一个<div>容器，其中包含了一个名为page_content的新的空块，块中的内容由衍生模板定义
+现在，程序使用的模板继承自这个模板，而不直接继承自Flask-Bootstrap的基模板，通过继承templates/base.html模板
+编写自定义的404错误页面很简单。
+templates/404.html
+{% extends "base.html" %}
+{% block title %}Flasky - Page Not Found{% endblock %}
+{% block page_content %}
+<div class="page-header">
+  <h1>Not Found</h1>
+</div>
+{% endblock %}
+
+自定义错误404页面：
+templates/user.html可以通过继承这个基模板来简化内容：
+{% extends "base.html" %}
+{% block title %}Flasky{% endblock %}
+{% block page_content %}
+<div class="page-header">
+  <h1>Hello, {{ name }}!</h1>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
 
 
 
