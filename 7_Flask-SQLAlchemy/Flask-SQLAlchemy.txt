@@ -85,6 +85,62 @@ Enum                  str                           一组字符串
 PickleType            任何Python对象                自动使用Pickle序列化
 LargeBinary           str                           二进制文件
 
+db.Column中其余的参数指定属性的配置选项，列出了一些可用选项。
+最常使用的SQLAlchemy列选项：
+选项名：                   说明：
+primary_key                如果设为True,这列就是表的主键
+unique                     如果设为True,这列不允许出现重复的值
+index                      如果设为True,为这列创建索引，提升查询效率
+nullable                   如果设为True,这列允许使用空值；如果设为False，这列不允许使用空值
+default                    为这列定义默认值
+
+Flask-SQLAlchemy要求每个模型都要定义主键，这一列经常命名为id.
+虽然没有强制要求，但这两个模型都定义了__repr()__方法，返回一个具有可读性的字符串表示模型，可在调整和测试时使用
+
+
+关系：
+关系型数据库使用关系把不同表中的行联系起来，所示的关系图表示用户和角色之间的一种简单关系。这是角色到用户的一对
+多关系，因为一个角色可属于多个用户，而每个用户都只能有一个角色。
+
+例如： 一堆多关系模型类中表示方法
+class Role(db.Model):
+    # ...
+    users = db.relationship('User', backref='role')
+
+class User(db.Model):
+    # ...
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+
+db.ForeignKey：普通整数32位
+
+关系使用users表中的外键里连接了两行。添加到User模型中的role_id列被定义为外键，就是这个外键建立起了关系，传给
+db.ForeignKey()的参数 'roles.id'表明，这列的值是roles表中行的id值
+
+添加到Role模型中的users属性代表这个关系的面向对象视角，对于一个Role类的实例，其users属性将返回与角色关联的用户
+组成的列表.db.relationship()的第一个参数表名这个关系的另一端是哪个模型。如果模型类尚未定义可使用字符串形式指定
+
+db.relationship()中的backref参数向User模型中添加一个role属性，从而定义反向关系。这一属性可替代role_id访问Role模型，此时获取的是模型对象，而不是外键的值。
+
+大多数情况下，db.relationship()都能自行找到关系中的外键，但有时却无法决定把哪一列作为外键。例如，如果User模型
+中有两个或以上的列定义为Role模型的外键，SQLAlchemy就不知道该使用哪列。如果无法决定外键，你就要为
+db.relationship()提供额外参数，从而确定所有外键。表中列出了定义关系时常用的配置选项
+
+常用的SQLAlchemy关系选项：
+选项名：                  说明：
+backref                   在关系的另一个模型中添加反向引用
+primaryjoin               明确指定两个模型之间是有的联结条件。只在模棱两可的关系中需要指定
+lazy                      指定如何加载相关记录。可选值有select(首次访问时按需加载)、immediate(源对象加载后就加                           载)、joined(加载记录，但是有联结)、subquery(立即加载，但使用子查询)，noload(用不加载)                          和dynamic(不加载记录，但提供加载记录的查询)
+
+
+
+
+
+
+
+
+
+
+
 
 
 
