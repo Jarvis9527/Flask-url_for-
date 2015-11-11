@@ -282,6 +282,101 @@ count()                返回查询结果的数量
 paginate()             返回一个paginate对象，它包含指定范围内的结果
 
 
+##########################################################################
+关系和查询的处理方式类似。下面这个例子分别从关系的两端查询角色和用户之间的一对多关系：
+>>> users = user_role.users
+>>> users
+[<User u'susan'>, <User u'david'>]
+>>> users[0].role
+<Role u'User'>
+
+这个例子中的user_role.users查询有个小问题。执行user_role.users表达式时，隐含的查询会调用all()返回一个用户列表
+query对象是隐藏的，因此无法指定更经常的查询过滤器。就这个特定示例而言，返回一个按照字母顺序排序的用户列表可能
+更好。在示例中，我们修改了关系的设置，加入了lazy =
+'dynamic'参数，从而禁止自动执行查询
+
+hello.py: 动态关系
+class Role(db.Model):
+    # ...
+    users = db.relationship('user', backref='role', lazy='dynamic')
+    # ...
+
+这样配置关系之后，user_role.users会返回一个尚未执行的查询，因此可以在其上添加过滤器：
+
+>>> user_role.users.order_by(User.username).all()
+[<User u'david'>, <User u'susan'>]
+>>> user_role.users.count()
+2
+
+
+在视图函数中操作数据库：
+前一节介绍的数据库操作可以直接在视图函数中进行，展示了首页路由的新版本，已经把用户输入的名字写入数据库。
+示例：hello.py: 在视图函数中操作数据库
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    form = NameForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.name.data).first()
+        if user is None:
+            user = User(username = form.name.data)
+            db.session.add(user)
+            session['known'] = False
+        else:
+            session['known'] = True
+        session['name'] = form.name.data
+        form.name.data = ''
+        return redirect(url_for('index'))
+    return render_template('index.html', 
+        form = form, name = session.get('name'), 
+        known = session.get('known', Falase))
+
+在这个修改后的版本中，提交表单后，程序会使用filter_by()查询过滤器在数据库中查找提交的名字。变量known被写入用户
+会话中，因此重定向之后，可以把数据传给模板，用来显示自定义的欢迎消息。注意，要想让程序正常运行，你必须按照前面
+介绍的方法，在Python Shell中创建数据库表。
+
+对应的模板新版本如视图所示，这个模板使用known参数在欢迎消息中加入了第二行，从而对已知用户和新用户显示不同的内容
+例如：
+templates/index.html
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html as wtf" %}
+{% block title %}Flasky{% endblock %}
+{% block page_content %}
+<div class="page-header">
+  <h1>Hello, {% if name %}{{ name }}{% else %}Stranger{% endif %}!</h1>
+  {% if not known %}
+  <p>Pleased to meet you!</p>
+  {% else %}
+  <p>Happy to see you again!</p>
+  {% endif %}
+<div>
+{{ wtf.quick_form(form) }}
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
