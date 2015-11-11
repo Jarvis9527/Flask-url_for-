@@ -4,6 +4,8 @@ SQLAlchemy是一个很强大的关系型数据库框架，支持多种数据库�
 低层功能。
 
 中文学习链接：http://www.pythondoc.com/flask-sqlalchemy/quickstart.html
+              http://www.ibm.com/developerworks/cn/aix/library/au-sqlalchemy/
+
 
 和其他大多数拓展一样,Flask-SQLAlchemy也使用pip安装：
 pip install flask-sqlalchemy
