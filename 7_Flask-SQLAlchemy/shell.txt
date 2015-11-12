@@ -21,3 +21,115 @@ $ python hello.py shell
 
 
 
+使用Flask-Migrate实现数据库迁移
+在开发程序的过程中，你会发现有时需要修改数据库模型，而且修改之后还需要更新数据库。
+
+仅当数据库表不存在时，Flask-SQLAlchemy才会根据模型进行创建。因此，更新表的唯一方式就是先删除旧表，
+不过这样做会丢失数据库中的所有数据。
+
+更新表的更好方法是使用数据库迁移框架。源码版本控制工具可以跟踪源码文件的变化，类似地，数据库迁移框架能够跟踪数据库模式的变化，然后增量式的把变化应用到数据库中。
+
+SQLAlchemy的主力开发人员编写了一个迁移框架，称为Alembic(https://alembic.readthedocs.org/en/latest/index.html)
+除了直接使用Alembic之外，Flask程序还可以使用Flask-Migrate(http://flask-migrate.readthedocs.org/en/latest)拓展
+这个拓展对Alembic做了轻量级包装，并集到Flask-Script中,所有操作都通过Flask-Script命令完成。
+
+
+
+创建迁移仓库：
+首先，在虚拟环境中安装Flask-Migrate
+(venv) $ pip install flask-migrate
+
+在这个拓展的初始化方法如例子所示：
+hello.py: 配置Flask-Migrate
+from flask.ext.migrate import Migrate, MigrateCommand
+# ...
+migrate = Migrate(app, db)
+manager.add_command('db', MigrateCommand)
+
+为了到处数据库迁移命令，Flask-Migrate提供了一个MigrateCommand类，可附加到Flask-script的manager对象上。
+这个例子中，MigrateCommand类使用db命令附加。
+
+在维护数据库迁移之前，要使用init子命令创建迁移仓库：
+(venv) $ python hello.py db init 
+Creating directory /home/flask/flasky/migrations ...done
+# ...
+'/home/flask/flasky/migrations/alembic.ini' before processding
+
+这个命令会创建migrations文件夹，所有迁移脚本都存放其中。
+#数据库迁移仓库中的文件要和程序的其他文件一起纳入版本控制
+
+################
+创建迁移脚本：
+在Alembic中，数据库迁移用迁移脚本表示。脚本中有两个函数，分别是upgrade()和downgrade(),upgrade()函数把迁移中的
+改动应用到数据库中，downgrade()函数则将改动删除。Alembic具有添加和删除改动的能力，因此数据库可重设到修改历史的
+任意一点。
+
+我们可以使用revision命令手动常见Alembic迁移，也可使用migrate命令自动创建。
+手动创建的迁移只是一个骨架，upgrade()和downgrade()函数都是空的，开发者要使用Alembic提供的operations对象
+实现具体操作。自动创建和迁移会根据模型定义和数据库当前状态之间的差异生成upgrade()和downgrade()函数的内容。
+
+#自动创建的迁移不一定总是正确的，有可能会漏掉一些细节。自动生成迁移脚本后一定要进行检查
+
+migrate子命令用来自动创建迁移脚本：
+(venv) $ python hello.py db migrate -m "initial migration"
+# ...
+
+#注意，你不用再生产程序的迁移，因为这个仓库已经包含了所有的迁移脚本。
+
+
+
+更新数据库
+检查并修改好迁移脚本之后，我们可以使用db upgrade命令把迁移应用到数据库中：
+(venv) $ python hello.py db upgrade
+
+对第一个迁移来说，其作用和调用db.create_all()方法一样。旦在后续的迁移中upgrade命令能把改动应用到数据库中，且
+不影响其中保存的数据。
+
+#如果你从Github上克隆了这个程序Git仓库，请删除数据文件data.sqlite，然后执行Flask0Migrate提供的upgrade命令，请用这个迁移框架重新生成数据库
+
+数据库的设计和使用时很重要的话题，甚至有正本的书对其进行介绍，应该把本章视作一个概览，更高级的话题在后续各章
+总讨论。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
